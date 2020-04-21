@@ -9,12 +9,10 @@ class Generator:
     def __call__(self, inputs, training=False):
         inputs = tf.convert_to_tensor(inputs)
         with tf.variable_scope('g', reuse=self.reuse):
-            # reshape from inputs
             with tf.variable_scope('reshape'):
                 outputs = tf.layers.dense(inputs, self.depths[0] * self.s_size * self.s_size)
                 outputs = tf.reshape(outputs, [-1, self.s_size, self.s_size, self.depths[0]])
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training), name='outputs')
-            # transposed convolution x 4
             with tf.variable_scope('deconv1'):
                 outputs = tf.layers.conv2d_transpose(outputs, self.depths[1], [5, 5], strides=(2, 2), padding='SAME')
                 outputs = tf.nn.relu(tf.layers.batch_normalization(outputs, training=training), name='outputs')
@@ -44,7 +42,6 @@ class Discriminator:
         outputs = tf.convert_to_tensor(inputs)
 
         with tf.name_scope('d' + name), tf.variable_scope('d', reuse=self.reuse):
-            # convolution x 4
             with tf.variable_scope('conv1'):
                 outputs = tf.layers.conv2d(outputs, self.depths[1], [5, 5], strides=(2, 2), padding='SAME')
                 outputs = leaky_relu(tf.layers.batch_normalization(outputs, training=training), name='outputs')
@@ -93,18 +90,9 @@ class DCGAN:
         self.grad_complete_loss = tf.gradients(self.complete_loss, self.zhat)
 
     def loss(self, traindata):
-        """build models, calculate losses.
-
-        Args:
-            traindata: 4-D Tensor of shape `[batch, height, width, channels]`.
-
-        Returns:
-            dict of each models' losses.
-        """
         generated = self.g(self.z, training=True)
         g_outputs = self.d(generated, training=True, name='g')
         t_outputs = self.d(traindata, training=True, name='t')
-        # add each losses to collection
         tf.add_to_collection(
             'g_losses',
             tf.reduce_mean(
@@ -129,13 +117,6 @@ class DCGAN:
         }
 
     def train(self, losses, learning_rate=0.0002, beta1=0.5):
-        """
-        Args:
-            losses dict.
-
-        Returns:
-            train op.
-        """
         g_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta1)
         d_opt = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=beta1)
         g_opt_op = g_opt.minimize(losses[self.g], var_list=self.g.variables)

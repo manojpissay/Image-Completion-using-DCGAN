@@ -1,8 +1,6 @@
-import scipy.misc
-import imageio
 import numpy as np
-from PIL import Image
 import cv2
+import imageio
 
 
 def get_image(image_path, image_size, nb_channels=3, is_crop=True):

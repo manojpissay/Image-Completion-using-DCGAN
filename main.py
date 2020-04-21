@@ -7,7 +7,7 @@ from dcgan import DCGAN
 from imageModule import *
 
 FLAGS = tf.app.flags.FLAGS
-tf.app.flags.DEFINE_string('data_dir', 'data/pokemon', "Path to tfrecords data directory")
+tf.app.flags.DEFINE_string('data_dir', 'data/Chars74K', "Path to tfrecords data directory")
 tf.app.flags.DEFINE_string('log_dir', 'checkpoints', "Path to write logs and checkpoints")
 tf.app.flags.DEFINE_string('images_dir', 'images', "Path to save generated images")
 tf.app.flags.DEFINE_string('complete_src', 'complete_src', "Path to images for completion")
