@@ -109,7 +109,7 @@ def main(_):
                 start_time = time.time()
                 _, g_loss, d_loss = sess.run([train_op, losses[dcgan.g], losses[dcgan.d]])
                 duration = time.time() - start_time
-                print('Step: %d, Loss: (G: %.6f, D: %.6f), Time taken: %.4f' % (itr, g_loss, d_loss, duration))
+                print('Step: %d, Loss: (G: %.8f, D: %.8f), Time taken: %.3f' % (itr, g_loss, d_loss, duration))
 
                 if itr % 2000 == 0:
                     # Images generated
